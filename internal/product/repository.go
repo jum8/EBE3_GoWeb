@@ -23,7 +23,7 @@ func NewMemoryRespository() Respository {
 	return &repository{
 		products: []domain.Product{
 			{
-				Id:          "1",
+				Id:          1,
 				Name:        "Coco Cola",
 				Quantity:    10,
 				CodeValue:   "123456789",
@@ -32,7 +32,7 @@ func NewMemoryRespository() Respository {
 				Price:       10.5,
 			},
 			{
-				Id:          "2",
+				Id:          2,
 				Name:        "Pepsito",
 				Quantity:    10,
 				CodeValue:   "123456789",
@@ -41,7 +41,7 @@ func NewMemoryRespository() Respository {
 				Price:       8.5,
 			},
 			{
-				Id:          "3",
+				Id:          3,
 				Name:        "Fantastica",
 				Quantity:    10,
 				CodeValue:   "123456789",
@@ -69,7 +69,7 @@ func (r *repository) Save(ctx context.Context, product domain.Product) (domain.P
 }
 
 // Update implements Respository.
-func (r *repository) Update(ctx context.Context, product domain.Product, id string) (domain.Product, error) {
+func (r *repository) Update(ctx context.Context, product domain.Product, id int) (domain.Product, error) {
 	var result domain.Product
 	for index, currentProduct := range r.products {
 		if currentProduct.Id == id {
@@ -80,14 +80,14 @@ func (r *repository) Update(ctx context.Context, product domain.Product, id stri
 		}
 	}
 
-	if result.Id == "" {
+	if result.Id == 0 {
 		return domain.Product{}, ErrNotFound
 	}
 	
 	return result, nil
 }
 
-func (r *repository) Delete(ctx context.Context, id string) error {
+func (r *repository) Delete(ctx context.Context, id int) error {
 	var result domain.Product
 	for index, product := range r.products {
 		if product.Id == id {
@@ -97,14 +97,14 @@ func (r *repository) Delete(ctx context.Context, id string) error {
 		}
 	}
 
-	if result.Id == "" {
+	if result.Id == 0 {
 		return ErrNotFound
 	}
 	return nil
 }
 
 // Get by id
-func (r *repository) GetById(ctx context.Context, id string) (domain.Product, error) {
+func (r *repository) GetById(ctx context.Context, id int) (domain.Product, error) {
 	var productFound domain.Product
 	for _, product := range r.products {
 		if product.Id == id {
@@ -113,7 +113,7 @@ func (r *repository) GetById(ctx context.Context, id string) (domain.Product, er
 		}
 	}
 
-	if productFound.Id == "" {
+	if productFound.Id == 0 {
 		return domain.Product{}, ErrNotFound
 	}
 

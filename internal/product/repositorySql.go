@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"strconv"
 
 	"github.com/jum8/EBE3_GoWeb.git/internal/domain"
 )
@@ -52,7 +51,7 @@ func (r *repositorySql) GetAll(ctx context.Context) ([]domain.Product, error) {
 }
 
 // GetById implements Respository.
-func (r *repositorySql) GetById(ctx context.Context, id string) (domain.Product, error) {
+func (r *repositorySql) GetById(ctx context.Context, id int) (domain.Product, error) {
 	var product domain.Product
 
 	row := r.storage.QueryRow(selectProductById, id)
@@ -94,13 +93,13 @@ func (r *repositorySql) Save(ctx context.Context, product domain.Product) (domai
 		return domain.Product{}, ErrLastInsertedId
 	}
 
-	productSaved.Id = strconv.Itoa(int(id))
+	productSaved.Id = int(id)
 
 	return productSaved, nil
 }
 
 // Update implements Respository.
-func (r *repositorySql) Update(ctx context.Context, product domain.Product, id string) (domain.Product, error) {
+func (r *repositorySql) Update(ctx context.Context, product domain.Product, id int) (domain.Product, error) {
 	productUpdated := copyProduct(product)
 
 	stmt, err := r.storage.Prepare(updateProduct)
@@ -120,7 +119,7 @@ func (r *repositorySql) Update(ctx context.Context, product domain.Product, id s
 }
 
 // Delete implements Respository.
-func (r *repositorySql) Delete(ctx context.Context, id string) error {
+func (r *repositorySql) Delete(ctx context.Context, id int) error {
 	stmt, err := r.storage.Prepare(deleteProduct)
 	if err != nil {
 		return ErrPrepareStmt

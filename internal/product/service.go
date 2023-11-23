@@ -9,10 +9,10 @@ import (
 
 type Service interface {
 	GetAll(ctx context.Context) ([]domain.Product, error)
-	GetById(ctx context.Context, id string) (domain.Product, error)
+	GetById(ctx context.Context, id int) (domain.Product, error)
 	Save(ctx context.Context, product domain.Product) (domain.Product, error)
-	Update(ctx context.Context, product domain.Product, id string) (domain.Product, error)
-	Delete(ctx context.Context, id string) error
+	Update(ctx context.Context, product domain.Product, id int) (domain.Product, error)
+	Delete(ctx context.Context, id int) error
 }
 
 type service struct {
@@ -34,7 +34,7 @@ func (s *service) GetAll(ctx context.Context) ([]domain.Product, error) {
 	return productsList, nil
 }
 
-func (s *service) GetById(ctx context.Context, id string) (domain.Product, error) {
+func (s *service) GetById(ctx context.Context, id int) (domain.Product, error) {
 	productFound, err := s.repository.GetById(ctx, id)
 	if err != nil {
 		log.Println("[ProductService][GetById] error getting product by id	", err)
@@ -54,7 +54,7 @@ func (s *service) Save(ctx context.Context, product domain.Product) (domain.Prod
 
 
 // Update implements Service.
-func (s *service) Update(ctx context.Context, product domain.Product, id string) (domain.Product, error) {
+func (s *service) Update(ctx context.Context, product domain.Product, id int) (domain.Product, error) {
 	result, err := s.repository.Update(ctx, product, id)
 	if err != nil {
 		log.Println("[ProductsService][Update] error updating product by ID", err)
@@ -63,7 +63,7 @@ func (s *service) Update(ctx context.Context, product domain.Product, id string)
 	return result, nil
 }
 
-func (s *service) Delete(ctx context.Context, id string) error {
+func (s *service) Delete(ctx context.Context, id int) error {
 	err := s.repository.Delete(ctx, id)
 	if err != nil {
 		log.Println("[ProductService][Delete] error deleting product", err)

@@ -2,11 +2,11 @@ package product
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jum8/EBE3_GoWeb.git/internal/domain"
 	"github.com/jum8/EBE3_GoWeb.git/internal/product"
-	
 )
 
 
@@ -46,7 +46,16 @@ func (c *Controller) HandlerGetAll() gin.HandlerFunc {
 func (c *Controller) HandlerGetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		idParam := ctx.Param("id")
-		productFound, err := c.service.GetById(ctx, idParam)
+		id, err := strconv.Atoi(idParam)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"message": "bad request",
+				"err": err,
+			})
+			return
+		}
+
+		productFound, err := c.service.GetById(ctx, id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 				"message": "Internal server error",
@@ -85,6 +94,14 @@ func (c *Controller) HandlerSaveProduct() gin.HandlerFunc {
 func (c *Controller) HandlerUpdateProduct() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		idParam := ctx.Param("id")
+		id, err := strconv.Atoi(idParam)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"message": "bad request",
+				"err": err,
+			})
+			return
+		}
 		
 		var productRequest domain.Product
 
@@ -95,7 +112,7 @@ func (c *Controller) HandlerUpdateProduct() gin.HandlerFunc {
 			})
 			return
 		}
-		product, err := c.service.Update(ctx, productRequest, idParam)
+		product, err := c.service.Update(ctx, productRequest, id)
 
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
@@ -113,7 +130,16 @@ func (c *Controller) HandlerUpdateProduct() gin.HandlerFunc {
 func (c *Controller) HandlerDeleteProduct() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		idParam := ctx.Param("id")
-		err := c.service.Delete(ctx, idParam)
+		id, err := strconv.Atoi(idParam)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"message": "bad request",
+				"err": err,
+			})
+			return
+		}
+
+		err = c.service.Delete(ctx, id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
 				"message": err,
