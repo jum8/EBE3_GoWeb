@@ -1,18 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	handlerPing "github.com/jum8/EBE3_GoWeb.git/cmd/server/handler/ping"
 	handlerProduct "github.com/jum8/EBE3_GoWeb.git/cmd/server/handler/product"
+	"github.com/jum8/EBE3_GoWeb.git/docs"
 	"github.com/jum8/EBE3_GoWeb.git/internal/product"
 	"github.com/jum8/EBE3_GoWeb.git/pkg/middleware"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/files"
-	"github.com/jum8/EBE3_GoWeb.git/docs"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 const (
@@ -35,8 +39,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	db := connectDB()
+
 	controllerPing := handlerPing.NewControllerPing()
-	repo := product.NewMemoryRespository()
+	repo := product.NewSqlRespository(db)
 	service := product.NewProductService(repo)
 	productController := handlerProduct.NewProductController(service)
 
@@ -66,4 +72,26 @@ func main() {
 		log.Fatal(err)
 	}
 
+}
+
+func connectDB() *sql.DB {
+	var username, password, hostName, port, database string
+
+	username = "root"
+	password = "root"
+	hostName = "localhost"
+	port = "3306"
+	database = "my_db"
+
+	datasource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", username, password, hostName, port, database)
+
+	db, err := sql.Open("mysql", datasource)
+	if err != nil {
+		panic(err)
+	}
+	
+	if err := db.Ping(); err != nil {
+		panic(err)
+	}
+	return db
 }
