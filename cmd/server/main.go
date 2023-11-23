@@ -75,15 +75,15 @@ func main() {
 }
 
 func connectDB() *sql.DB {
-	var username, password, hostName, port, database string
+	var dbUsername, dbPassword, dbHostName, dbPort, dbName string
 
-	username = "root"
-	password = "root"
-	hostName = "localhost"
-	port = "3306"
-	database = "my_db"
+	dbUsername = os.Getenv("DB_USERNAME")
+	dbPassword = os.Getenv("DB_PASSWORD")
+	dbHostName = os.Getenv("DB_HOSTNAME")
+	dbPort = os.Getenv("DB_PORT")
+	dbName = os.Getenv("DB_NAME")
 
-	datasource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", username, password, hostName, port, database)
+	datasource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUsername, dbPassword, dbHostName, dbPort, dbName)
 
 	db, err := sql.Open("mysql", datasource)
 	if err != nil {
